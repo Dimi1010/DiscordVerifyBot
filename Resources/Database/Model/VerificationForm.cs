@@ -37,17 +37,17 @@ namespace DiscordVerifyBot.Resources.Database.Model
         /// <summary>
         /// Snowflake ID of the user approved the verification
         /// </summary>
-        public ulong Approver { get; set; }
+        public ulong? Approver { get; set; }
 
         /// <summary>
         /// Boolean if the verification was approved
         /// </summary>
-        public bool IsApproved { get; set; }
+        public bool? IsApproved { get; set; }
 
         /// <summary>
         /// Verification Approval date in UTC
         /// </summary>
         [Column(TypeName = "DateTime")]
-        public DateTime ApprovedUtc { get; set; }
+        public DateTime? ApprovedUtc { get; set; }
     }
 }

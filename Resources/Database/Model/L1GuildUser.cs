@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DiscordVerifyBot.Resources.Database.Model
 {
-    public class DiscordGuildUser
+    public class L1GuildUser
     {
         /// <summary>
         /// ID of the data entry
