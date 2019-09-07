@@ -35,8 +35,8 @@ namespace DiscordVerifyBot.Resources.Database
 
             //Path to the Database
             string DbPath = "";
-            //Comment when Updating DB
-            //string DbPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
+            //HACK: Comment when Updating DB
+            DbPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
             //Name of the Database
             string DbFilename = "Database.sqlite";
 
