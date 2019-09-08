@@ -28,7 +28,7 @@ namespace DiscordVerifyBot.Core.Handlers
             _commands = service.GetRequiredService<CommandService>();
             _loggerService = service.GetRequiredService<ILoggerService>();
 
-            using ( var DH = new SettingsDH())
+            using ( var DH = new SettingsDataHandler())
             {
                 _prefix = DH.GetSettings().DefaultPrefix;
             }

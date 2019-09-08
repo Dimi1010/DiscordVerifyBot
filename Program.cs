@@ -25,7 +25,7 @@ namespace DiscordVerifyBot
         public Program()
         {
             Settings settings;
-            using (var DH = new SettingsDH())
+            using (var DH = new SettingsDataHandler())
             {
                 settings = DH.GetSettings();
             }
@@ -69,7 +69,7 @@ namespace DiscordVerifyBot
             //Fetches the Bot Token From File
             string Bot_Token = "";
 
-            using(var DH = new SettingsDH())
+            using(var DH = new SettingsDataHandler())
             {
                 await DH.SaveStockSettings();
                 Bot_Token = DH.GetSettings().BotToken;
