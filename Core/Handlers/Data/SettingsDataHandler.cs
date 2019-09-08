@@ -11,11 +11,11 @@ namespace DiscordVerifyBot.Core.Handlers
     /// <summary>
     /// Settings JSON Data Handler
     /// </summary>
-    public class SettingsDH : IDisposable
+    public class SettingsDataHandler : IDisposable
     {
         private readonly string _path;
 
-        public SettingsDH()
+        public SettingsDataHandler()
         {
             string AssemblyFullPath = Assembly.GetEntryAssembly().Location;
             string AssemblyFilename = Path.GetFileName(AssemblyFullPath);
@@ -120,7 +120,7 @@ namespace DiscordVerifyBot.Core.Handlers
         }
 
         // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~SettingsDH()
+        // ~SettingsDataHandler()
         // {
         //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         //   Dispose(false);
