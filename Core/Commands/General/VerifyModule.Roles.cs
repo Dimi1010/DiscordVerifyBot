@@ -46,7 +46,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             _logger.Log(Message: $"User {Context.User.Id} in {Context.Guild.Id} added role {role.Id} with action { action.ToString() }", Source:"Commands");
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"Role {role.Mention} has been added with the action {action.ToString()}.");
+                message: $"Role {role.Name} has been added with the action {action.ToString()}.");
         }
 
         [Command("Remove-Role")]
@@ -60,7 +60,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             _logger.Log(Message: $"User {Context.User.Id} in {Context.Guild.Id} removed role {role.Id} from the database", Source: "Commands");
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"Role {role.Mention} has been removed from the database.");
+                message: $"Role {role.Name} has been removed from the database.");
         }
     }
 }
