@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DiscordVerifyBot.Resources.Database.Model
 {
-    public class L1GuildUser
+    public class DiscordGuildUser
     {
+        public enum PermissionLevels
+        {
+            None,
+            Verify,
+            Approve
+        }
+
         /// <summary>
         /// ID of the data entry
         /// </summary>
@@ -23,5 +26,6 @@ namespace DiscordVerifyBot.Resources.Database.Model
         /// </summary>
         [Required] public ulong GuildId { get; set; }
 
+        [Required] public PermissionLevels PermissionLevel { get; set; }
     }
 }
