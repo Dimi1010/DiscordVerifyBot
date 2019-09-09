@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiscordVerifyBot.Migrations
 {
     [DbContext(typeof(SQLiteDatabaseContext))]
-    [Migration("20190907230706_v0.1")]
+    [Migration("20190908100212_v0.1")]
     partial class v01
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace DiscordVerifyBot.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
-            modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.L1GuildUser", b =>
+            modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.DiscordUser", b =>
                 {
                     b.Property<ulong>("Id")
                         .ValueGeneratedOnAdd();
@@ -27,23 +27,11 @@ namespace DiscordVerifyBot.Migrations
 
                     b.Property<ulong>("UserId");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("L1UsersDB");
-                });
-
-            modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.L2GuildUser", b =>
-                {
-                    b.Property<ulong>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<ulong>("GuildId");
-
-                    b.Property<ulong>("UserId");
+                    b.Property<int>("permissionLevel");
 
                     b.HasKey("Id");
 
-                    b.ToTable("L2UsersDB");
+                    b.ToTable("DiscordUsersDB");
                 });
 
             modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.VerificationForm", b =>

@@ -8,31 +8,18 @@ namespace DiscordVerifyBot.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "L1UsersDB",
+                name: "DiscordUsersDB",
                 columns: table => new
                 {
                     Id = table.Column<ulong>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<ulong>(nullable: false),
-                    GuildId = table.Column<ulong>(nullable: false)
+                    GuildId = table.Column<ulong>(nullable: false),
+                    permissionLevel = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_L1UsersDB", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "L2UsersDB",
-                columns: table => new
-                {
-                    Id = table.Column<ulong>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<ulong>(nullable: false),
-                    GuildId = table.Column<ulong>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_L2UsersDB", x => x.Id);
+                    table.PrimaryKey("PK_DiscordUsersDB", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,10 +45,7 @@ namespace DiscordVerifyBot.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "L1UsersDB");
-
-            migrationBuilder.DropTable(
-                name: "L2UsersDB");
+                name: "DiscordUsersDB");
 
             migrationBuilder.DropTable(
                 name: "VerificationDB");
