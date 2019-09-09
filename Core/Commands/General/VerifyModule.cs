@@ -180,6 +180,11 @@ namespace DiscordVerifyBot.Core.Commands.General
                 try
                 {
                     await VerificationFormDataHandler.AddPendingVerificationForm(form);
+
+                    await _replyservice.ReplyEmbedAsync(context: Context,
+                    message: $"Verification form for user {user.Username} has been submitted by {Context.User.Username}.");
+
+                    _logger.Log(Message: $"Verification form for user {user.Id} submitted by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
                 }
                 catch (VerificationFormExistsException)
                 {
