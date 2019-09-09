@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 using DiscordVerifyBot.Resources.Database;
 using DiscordVerifyBot.Resources.Database.Model;
@@ -15,11 +16,11 @@ namespace DiscordVerifyBot.Core.Handlers
         /// </summary>
         /// <param name="guildId">Snowflake ID of the guild</param>
         /// <returns></returns>
-        public static IQueryable<VerificationForm> GetVerificationFormsByGuild(ulong guildId)
+        public static IList<VerificationForm> GetVerificationFormsByGuild(ulong guildId)
         {
             using (var DbContext = new SQLiteDatabaseContext())
             {
-                return DbContext.VerificationDB.Where(x => x.GuildId == guildId);
+                return DbContext.VerificationDB.Where(x => x.GuildId == guildId).ToList();
             }
         }
 
@@ -28,11 +29,11 @@ namespace DiscordVerifyBot.Core.Handlers
         /// </summary>
         /// <param name="guildId">Snowflake ID of the guild</param>
         /// <returns></returns>
-        public static IQueryable<VerificationForm> GetPendingVerificationFormsByGuild(ulong guildId)
+        public static IList<VerificationForm> GetPendingVerificationFormsByGuild(ulong guildId)
         {
             using (var DbContext = new SQLiteDatabaseContext())
             {
-                return DbContext.VerificationDB.Where(x => x.GuildId == guildId && x.IsApproved == null);
+                return DbContext.VerificationDB.Where(x => x.GuildId == guildId && x.IsApproved == null).ToList();
             }
         }
 

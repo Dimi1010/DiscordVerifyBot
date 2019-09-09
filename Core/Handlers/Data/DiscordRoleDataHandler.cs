@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text;
 
 using DiscordVerifyBot.Resources.Database;
 using DiscordVerifyBot.Resources.Database.Model;
@@ -11,11 +10,11 @@ namespace DiscordVerifyBot.Core.Handlers
 {
     public static class DiscordRoleDataHandler
     {
-        public static IQueryable<DiscordRole> GetGuildRoles(ulong guildId)
+        public static IList<DiscordRole> GetGuildRoles(ulong guildId)
         {
             using (var DbContext = new SQLiteDatabaseContext())
             {
-                return DbContext.DiscordRolesDb.Where(x => x.GuildId == guildId);
+                return DbContext.DiscordRolesDb.Where(x => x.GuildId == guildId).ToList();
             }
         }
 
