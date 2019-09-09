@@ -15,12 +15,12 @@ namespace DiscordVerifyBot.Resources.Database
         /// <summary>
         /// Database of the users allowed to Verify
         /// </summary>
-        public DbSet<L1GuildUser> L1UsersDB { get; set; }
-        
+        public DbSet<DiscordGuildUser> DiscordUsersDB { get; set; }
+
         /// <summary>
-        /// Database of the users allowed to Approve verifications
+        /// Discord Role database
         /// </summary>
-        public DbSet<L2GuildUser> L2UsersDB { get; set; }
+        public DbSet<DiscordRole> DiscordRolesDb { get; set; }
 
         /// <summary>
         /// Verification Database
@@ -35,7 +35,7 @@ namespace DiscordVerifyBot.Resources.Database
 
             //Path to the Database
             string DbPath = "";
-            //HACK: Comment when Updating DB
+            //HACK: Comment following line when Updating DB from NuGet
             DbPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
             //Name of the Database
             string DbFilename = "Database.sqlite";
