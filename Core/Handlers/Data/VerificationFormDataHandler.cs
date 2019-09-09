@@ -105,6 +105,10 @@ namespace DiscordVerifyBot.Core.Handlers
 
                     await DbContext.SaveChangesAsync();
                 }
+                else
+                {
+                    throw new VerificationFormExistsException();
+                }
             }
         }
 
