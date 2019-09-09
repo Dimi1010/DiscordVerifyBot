@@ -115,6 +115,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region Verification
 
         [Command("Verify")]
+        [RequireContext(ContextType.Guild)]
         public async Task Verify(IGuildUser user)
         {
             var invokingUser = DiscordUserDataHandler.GetGuildUserById(Context.User.Id, Context.Guild.Id);
@@ -192,6 +193,7 @@ namespace DiscordVerifyBot.Core.Commands.General
 
         #region Pending and Approval
         [Command("Pending")]
+        [RequireContext(ContextType.Guild)]
         public async Task GetPendingForGuild()
         {
             var query = VerificationFormDataHandler.GetPendingVerificationFormsByGuild(Context.Guild.Id);
@@ -224,6 +226,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         }
 
         [Command("Approve")]
+        [RequireContext(ContextType.Guild)]
         public async Task ApproveUser(IGuildUser user)
         {
             var invokingUser = DiscordUserDataHandler.GetGuildUserById(Context.User.Id, Context.Guild.Id);
@@ -281,6 +284,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         }
 
         [Command("Approve-All"), Alias("Approve-a")]
+        [RequireContext(ContextType.Guild)]
         public async Task ApproveAll()
         {
             var invokingUser = DiscordUserDataHandler.GetGuildUserById(Context.User.Id, Context.Guild.Id);
@@ -343,6 +347,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         }
 
         [Command("Deny")]
+        [RequireContext(ContextType.Guild)]
         public async Task DenyUser(IGuildUser user)
         {
             var invokingUser = DiscordUserDataHandler.GetGuildUserById(Context.User.Id, Context.Guild.Id);
