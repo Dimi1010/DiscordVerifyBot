@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiscordVerifyBot.Resources.Database.Model
 {
-    class VerificationForm
+    public class VerificationForm
     {
         /// <summary>
         /// ID of the form
