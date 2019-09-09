@@ -17,6 +17,7 @@ namespace DiscordVerifyBot.Core.Handlers
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly ILoggerService _loggerService;
+        private readonly IReplyService _replyService;
         private readonly IServiceProvider _service;
 
         private readonly string _prefix;
@@ -27,6 +28,7 @@ namespace DiscordVerifyBot.Core.Handlers
             _client = service.GetRequiredService<DiscordSocketClient>();
             _commands = service.GetRequiredService<CommandService>();
             _loggerService = service.GetRequiredService<ILoggerService>();
+            _replyService = service.GetRequiredService<IReplyService>();
 
             using ( var DH = new SettingsDataHandler())
             {
@@ -64,50 +66,21 @@ namespace DiscordVerifyBot.Core.Handlers
                 if (!string.IsNullOrEmpty(result.ErrorReason))
                 {
                     _loggerService.Log(
-                        Message: $"Error Handling Command. Text: {context.Message.Content} | Error: {result.ErrorReason}",
+                        Message: $"Error Processing Command. Text: {context.Message.Content} | Error: {result.ErrorReason}",
                         Source: "Commands"
                         );
 
-                    //TODO: Separate Replies into their own service
-                    var embedError = new EmbedBuilder()
-                    {
-                        Author = new EmbedAuthorBuilder()
-                        {
-                            Name = "Command Failed",
-                            IconUrl = context.Client.CurrentUser.GetAvatarUrl()
-                        },
-                        Description = result.ErrorReason,
-                        Color = Color.Blue,
-                        Timestamp = DateTime.UtcNow
-                    };
-
-                    await context.Channel.SendMessageAsync(embed: embedError.Build());
+                    await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason);
                 }
             }
             else
             {
                 if (!string.IsNullOrEmpty(result.ErrorReason))
                 {
-                    Console.WriteLine($"{DateTime.Now} at Commands ] Handling Command. Text: {context.Message.Content} | Result: {result.ErrorReason}");
                     _loggerService.Log(
-                        Message: $"Handling Command. Text: {context.Message.Content} | Result: {result.ErrorReason}",
+                        Message: $"Processing Command. Text: {context.Message.Content} | Result: {result.ErrorReason}",
                         Source: "Commands"
                         );
-
-                    //TODO: Separate Replies into their own service
-                    var embedError = new EmbedBuilder()
-                    {
-                        Author = new EmbedAuthorBuilder()
-                        {
-                            Name = "Command Successful",
-                            IconUrl = context.Client.CurrentUser.GetAvatarUrl()
-                        },
-                        Description = result.ErrorReason,
-                        Color = Color.Blue,
-                        Timestamp = DateTime.UtcNow
-                    };
-
-                    await context.Channel.SendMessageAsync(embed: embedError.Build());
                 }
             }
         }
