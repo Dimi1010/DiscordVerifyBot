@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiscordVerifyBot.Resources.Database.Model
 {
@@ -14,7 +15,9 @@ namespace DiscordVerifyBot.Resources.Database.Model
         /// <summary>
         /// ID of the data entry
         /// </summary>
-        [Key] public ulong Id { get; set; }
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
+        public ulong Id { get; set; }
 
         /// <summary>
         /// Snowflake ID of the discord user
