@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using Discord;
@@ -12,6 +13,7 @@ using DiscordVerifyBot.Core.Services;
 using DiscordVerifyBot.Core.Handlers;
 
 using DiscordVerifyBot.Resources;
+using DiscordVerifyBot.Resources.Database;
 
 namespace DiscordVerifyBot
 {
@@ -28,6 +30,12 @@ namespace DiscordVerifyBot
             using (var DH = new SettingsDataHandler())
             {
                 settings = DH.GetSettings();
+            }
+
+            //Creates and/or Updates the database when the program is strated
+            using (var DbContext = new SQLiteDatabaseContext())
+            {
+                DbContext.Database.Migrate();
             }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig
