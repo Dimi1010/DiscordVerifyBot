@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <None Update="Data\Database.sqlite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Data\settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
