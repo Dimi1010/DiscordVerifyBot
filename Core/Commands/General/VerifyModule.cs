@@ -37,7 +37,7 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Source: "Commands");
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"User {user.Nickname} has been granted verifier permissions.");
+                message: $"User {user.Username} has been granted verifier permissions.");
         }
 
         [Command("Remove-Verifier"), Alias("remove-v"), Summary("Removes a user to the guild's verifier list")]
@@ -50,7 +50,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             if(res == null || res.PermissionLevel != DiscordGuildUser.PermissionLevels.Verify)
             {
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"User {user.Nickname} does not have verifier permissions.");
+                    message: $"User {user.Username} does not have verifier permissions.");
             }
             else
             {
@@ -61,7 +61,7 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Source: "Commands");
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"User {user.Nickname}'s verifier permissions have been revoked.");
+                    message: $"User {user.Username}'s verifier permissions have been revoked.");
             }
         }
 
@@ -82,7 +82,7 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Source: "Commands");
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"User {user.Nickname} has been granted approver permissions.");
+                message: $"User {user.Username} has been granted approver permissions.");
         }
 
         [Command("Remove-Approver"), Alias("remove-a"), Summary("Removes a user to the guild's approver list")]
@@ -95,7 +95,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             if (res == null || res.PermissionLevel != DiscordGuildUser.PermissionLevels.Approve)
             {
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"User {user.Nickname} does not have approver permissions.");
+                    message: $"User {user.Username} does not have approver permissions.");
             }
             else
             {
@@ -106,7 +106,7 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Source: "Commands");
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"User {user.Nickname}'s approver permissions have been revoked.");
+                    message: $"User {user.Username}'s approver permissions have been revoked.");
             }
         }
 
@@ -166,9 +166,9 @@ namespace DiscordVerifyBot.Core.Commands.General
 
                 await VerificationFormDataHandler.AddFullVerificationForm(form);
 
-                var message = $"User {user.Nickname} has been verified ";
+                var message = $"User {user.Username} has been verified ";
                 if(form.Verifier != Context.User.Id)
-                    message += $"by { Context.Guild.GetUser(form.Verifier).Nickname } ";
+                    message += $"by { Context.Guild.GetUser(form.Verifier).Username } ";
                 message += "and approved.";
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
@@ -184,7 +184,7 @@ namespace DiscordVerifyBot.Core.Commands.General
                 catch (VerificationFormExistsException)
                 {
                     await _replyservice.ReplyEmbedAsync(context: Context,
-                        message: $"User {user.Nickname} already has a pending verification form");
+                        message: $"User {user.Username} already has a pending verification form");
                 }
             }
         }
@@ -215,8 +215,8 @@ namespace DiscordVerifyBot.Core.Commands.General
             {
                 var field = new EmbedFieldBuilder
                 {
-                    Name = Context.Guild.GetUser(form.Verified).Nickname,
-                    Value = $"Verifier: { Context.Guild.GetUser(form.Verifier).Nickname } \n Issued: { form.IssuedUtc.ToString(format: "dd/MM/yyyy HH:mm") }"
+                    Name = Context.Guild.GetUser(form.Verified).Username,
+                    Value = $"Verifier: { Context.Guild.GetUser(form.Verifier).Username } \n Issued: { form.IssuedUtc.ToString(format: "dd/MM/yyyy HH:mm") }"
                 };
 
                 embed.AddField(field);
@@ -242,7 +242,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             if(query.Count() < 1)
             {
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"No pending verification for user { user.Nickname }");
+                    message: $"No pending verification for user { user.Username }");
 
                 return;
             }
@@ -278,7 +278,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"User {user.Nickname} has been approved.");
+                message: $"User {user.Username} has been approved.");
 
             _logger.Log(Message: $"User {user.Id} approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
@@ -341,7 +341,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             }
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"The pending forms ({ query.Count() }) have been bulk approved by { (Context.User as IGuildUser).Nickname }");
+                message: $"The pending forms ({ query.Count() }) have been bulk approved by { Context.User.Username }");
 
             _logger.Log(Message: $"Bulk approval ({ query.Count() } forms) by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
@@ -363,7 +363,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             if (query.Count() < 1)
             {
                 await _replyservice.ReplyEmbedAsync(context: Context,
-                    message: $"No pending verification for user { user.Nickname }");
+                    message: $"No pending verification for user { user.Username }");
 
                 return;
             }
@@ -374,7 +374,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
             await _replyservice.ReplyEmbedAsync(context: Context,
-                message: $"User {user.Nickname} has been denied verification.");
+                message: $"User {user.Username} has been denied verification.");
 
             _logger.Log(Message: $"User {user.Id} denied by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
