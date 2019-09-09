@@ -79,11 +79,8 @@ namespace DiscordVerifyBot
 
             using(var DH = new SettingsDataHandler())
             {
-                await DH.SaveStockSettings();
                 Bot_Token = DH.GetSettings().BotToken;
             }
-
-            Environment.Exit(0);
 
             //Awaits Bot Login / Start Confirmation
             await _client.LoginAsync(TokenType.Bot, Bot_Token);
