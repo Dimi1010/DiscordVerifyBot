@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiscordVerifyBot.Migrations
 {
     [DbContext(typeof(SQLiteDatabaseContext))]
-    [Migration("20190909182852_v0.1")]
+    [Migration("20190913205521_v0.1")]
     partial class v01
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,8 @@ namespace DiscordVerifyBot.Migrations
 
             modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.DiscordGuildUser", b =>
                 {
-                    b.Property<ulong>("Id");
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("GuildId");
 

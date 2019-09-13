@@ -25,7 +25,8 @@ namespace DiscordVerifyBot.Migrations
                 name: "DiscordUsersDB",
                 columns: table => new
                 {
-                    Id = table.Column<ulong>(nullable: false),
+                    Id = table.Column<ulong>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<ulong>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
                     PermissionLevel = table.Column<int>(nullable: false)
