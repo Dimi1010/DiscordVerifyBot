@@ -1,11 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-
-using DiscordVerifyBot.Core.Services;
 using DiscordVerifyBot.Core.Handlers;
 using DiscordVerifyBot.Resources.Database.Model;
 
