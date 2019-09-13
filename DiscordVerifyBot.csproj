@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190909182852_v0.1.cs" />
+    <Compile Remove="Migrations\20190909182852_v0.1.Designer.cs" />
+    <Compile Remove="Migrations\20190913204301_v0.2.cs" />
+    <Compile Remove="Migrations\20190913204301_v0.2.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />

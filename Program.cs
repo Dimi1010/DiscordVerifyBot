@@ -45,6 +45,19 @@ namespace DiscordVerifyBot
             using (var DbContext = new SQLiteDatabaseContext())
             {
                 DbContext.Database.Migrate();
+                //int maxRetries = 3;
+                //for(int i = 0; i < maxRetries; i++)
+                //{
+                //    try
+                //    {
+                //        DbContext.Database.Migrate();
+                //        break;
+                //    }
+                //    catch (System.NotSupportedException e)
+                //    {
+                //        DbContext.Database.EnsureDeleted();
+                //    }
+                //}
             }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig
