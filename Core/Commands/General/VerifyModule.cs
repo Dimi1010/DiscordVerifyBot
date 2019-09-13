@@ -230,7 +230,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             await _replyservice.ReplyEmbedAsync(context: Context, embed: embed);
         }
 
-        [Command("Approve")]
+        [Command("Approve"), Alias("Accept", "Allow")]
         [RequireContext(ContextType.Guild)]
         public async Task ApproveUser(IGuildUser user)
         {
@@ -288,7 +288,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             _logger.Log(Message: $"User {user.Id} approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
 
-        [Command("Approve-All"), Alias("Approve-a")]
+        [Command("Approve-All"), Alias("Approve-a", "Allow-All", "Accept-All")]
         [RequireContext(ContextType.Guild)]
         public async Task ApproveAll()
         {
