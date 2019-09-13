@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,16 @@ namespace DiscordVerifyBot
         private readonly IServiceProvider _serviceProvider;
         private readonly CommandHandler _commandHandler;
 
+        private static ManualResetEvent _quitEvent = new ManualResetEvent(false);
+
         public Program()
         {
+            Console.CancelKeyPress += (sender, eArgs) =>
+            {
+                _quitEvent.Set();
+                eArgs.Cancel = true;
+            };
+
             Settings settings;
             using (var DH = new SettingsDataHandler())
             {
@@ -86,7 +95,7 @@ namespace DiscordVerifyBot
             await _client.LoginAsync(TokenType.Bot, Bot_Token);
             await _client.StartAsync();
 
-            await Task.Delay(-1);
+            _quitEvent.WaitOne();
         }
     }
 }
