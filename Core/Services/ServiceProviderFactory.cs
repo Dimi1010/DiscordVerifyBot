@@ -22,7 +22,7 @@ namespace DiscordVerifyBot.Core.Services
             .AddSingleton(_client)
             .AddSingleton(_commands)
             .AddSingleton<ILoggerService, ConsoleLoggerService>()
-            .AddSingleton<IReplyService, CommandReplyService>()
+            .AddTransient<IReplyService, CommandReplyService>()
             .BuildServiceProvider();
     }
 }
