@@ -171,10 +171,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                     message += $"by { Context.Guild.GetUser(form.Verifier).Username } ";
                 message += "and approved.";
 
+                _logger.Log(Message: $"User {user.Id} verified and approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
                 await _replyservice.ReplyEmbedAsync(context: Context,
                     message: message);
-
-                _logger.Log(Message: $"User {user.Id} verified and approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
             }
             else {
                 try
