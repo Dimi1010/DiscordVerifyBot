@@ -25,7 +25,7 @@ namespace DiscordVerifyBot
         private readonly IServiceProvider _serviceProvider;
         private readonly CommandHandler _commandHandler;
 
-        private static ManualResetEvent _quitEvent = new ManualResetEvent(false);
+        internal static ManualResetEvent _quitEvent = new ManualResetEvent(false);
 
         public Program()
         {
