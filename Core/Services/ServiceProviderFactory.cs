@@ -21,8 +21,8 @@ namespace DiscordVerifyBot.Core.Services
             => new ServiceCollection()
             .AddSingleton(_client)
             .AddSingleton(_commands)
-            .AddTransient<ILoggerService, ConsoleLoggerService>()
-            .AddTransient<IReplyService, CommandReplyService>()
+            .AddSingleton<ILoggerService, ConsoleLoggerService>()
+            .AddSingleton<IReplyService, CommandReplyService>()
             .BuildServiceProvider();
     }
 }
