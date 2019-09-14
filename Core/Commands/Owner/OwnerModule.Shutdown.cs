@@ -10,10 +10,6 @@ namespace DiscordVerifyBot.Core.Commands.Owner
         RequireOwner]
         public async Task ShutdownAsync()
         {
-            await Context.Client.LogoutAsync();
-            await Context.Client.StopAsync();
-            await Task.Delay(millisecondsDelay: 1000);
-
             Program._quitEvent.Set();
         }
     }

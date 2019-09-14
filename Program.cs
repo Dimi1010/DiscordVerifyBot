@@ -109,6 +109,10 @@ namespace DiscordVerifyBot
             await _client.StartAsync();
 
             _quitEvent.WaitOne();
+
+            await _client.LogoutAsync();
+            await _client.StopAsync();
+            await Task.Delay(millisecondsDelay: 1000);
         }
     }
 }
