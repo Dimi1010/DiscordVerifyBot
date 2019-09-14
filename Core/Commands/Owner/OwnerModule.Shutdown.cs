@@ -13,7 +13,8 @@ namespace DiscordVerifyBot.Core.Commands.Owner
             await Context.Client.LogoutAsync();
             await Context.Client.StopAsync();
             await Task.Delay(millisecondsDelay: 1000);
-            Environment.Exit(0);
+
+            Program._quitEvent.Set();
         }
     }
 }
