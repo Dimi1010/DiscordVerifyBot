@@ -23,7 +23,7 @@ namespace DiscordVerifyBot
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly CommandHandler _commandHandler;
+        private readonly CommandHandler _commandHandler;        
 
         internal static ManualResetEvent _quitEvent = new ManualResetEvent(false);
 
@@ -74,7 +74,13 @@ namespace DiscordVerifyBot
 
             _serviceProvider = new ServiceProviderFactory(_client, _commandService).Build();
 
-            _commandHandler = new CommandHandler(_serviceProvider);
+            _commandHandler = new CommandHandler(
+                client: _client,
+                commandService: _commandService,
+                serviceProvider: _serviceProvider,
+                loggerService: _serviceProvider.GetRequiredService<ILoggerService>(),
+                replyService: _serviceProvider.GetRequiredService<IReplyService>()
+                );
 
             _client.Log += OnClientLogAsync;
             _client.Ready += OnClientReadyAsync;

@@ -15,20 +15,25 @@ namespace DiscordVerifyBot.Core.Handlers
     public class CommandHandler
     {
         private readonly DiscordSocketClient _client;
-        private readonly CommandService _commands;
+        private readonly CommandService _commandService;
         private readonly ILoggerService _loggerService;
         private readonly IReplyService _replyService;
-        private readonly IServiceProvider _service;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly string _prefix;
 
-        public CommandHandler(IServiceProvider service)
+        public CommandHandler(
+            DiscordSocketClient client,
+            CommandService commandService, 
+            IServiceProvider serviceProvider,
+            ILoggerService loggerService,
+            IReplyService replyService)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
-            _client = service.GetRequiredService<DiscordSocketClient>();
-            _commands = service.GetRequiredService<CommandService>();
-            _loggerService = service.GetRequiredService<ILoggerService>();
-            _replyService = service.GetRequiredService<IReplyService>();
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _loggerService = loggerService ?? throw new ArgumentNullException(nameof(loggerService));
+            _replyService = replyService ?? throw new ArgumentNullException(nameof(replyService));
 
             using ( var DH = new SettingsDataHandler())
             {
@@ -38,9 +43,9 @@ namespace DiscordVerifyBot.Core.Handlers
 
         public async Task SetupAsync()
         {
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _service);
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
 
-            _commands.CommandExecuted += OnCommandExecutedAsync;
+            _commandService.CommandExecuted += OnCommandExecutedAsync;
             _client.MessageReceived += HandleCommandAsync;
         }
 
@@ -56,7 +61,7 @@ namespace DiscordVerifyBot.Core.Handlers
 
             //Cancels command recognition if there is no prefix
             if (!(Message.HasStringPrefix(_prefix, ref prefixPos) || Message.HasMentionPrefix(_client.CurrentUser, ref prefixPos))) return;
-            _ = await _commands.ExecuteAsync(Context, prefixPos, _service);
+            _ = await _commandService.ExecuteAsync(Context, prefixPos, _serviceProvider);
         }
 
         private async Task OnCommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
