@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,18 @@ namespace DiscordVerifyBot
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly CommandHandler _commandHandler;
+        private readonly CommandHandler _commandHandler;        
+
+        internal static ManualResetEvent _quitEvent = new ManualResetEvent(false);
 
         public Program()
         {
+            Console.CancelKeyPress += (sender, eArgs) =>
+            {
+                _quitEvent.Set();
+                eArgs.Cancel = true;
+            };
+
             Settings settings;
             using (var DH = new SettingsDataHandler())
             {
@@ -36,6 +45,19 @@ namespace DiscordVerifyBot
             using (var DbContext = new SQLiteDatabaseContext())
             {
                 DbContext.Database.Migrate();
+                //int maxRetries = 3;
+                //for(int i = 0; i < maxRetries; i++)
+                //{
+                //    try
+                //    {
+                //        DbContext.Database.Migrate();
+                //        break;
+                //    }
+                //    catch (System.NotSupportedException e)
+                //    {
+                //        DbContext.Database.EnsureDeleted();
+                //    }
+                //}
             }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig
@@ -52,7 +74,13 @@ namespace DiscordVerifyBot
 
             _serviceProvider = new ServiceProviderFactory(_client, _commandService).Build();
 
-            _commandHandler = new CommandHandler(_serviceProvider);
+            _commandHandler = new CommandHandler(
+                client: _client,
+                commandService: _commandService,
+                serviceProvider: _serviceProvider,
+                loggerService: _serviceProvider.GetRequiredService<ILoggerService>(),
+                replyService: _serviceProvider.GetRequiredService<IReplyService>()
+                );
 
             _client.Log += OnClientLogAsync;
             _client.Ready += OnClientReadyAsync;
@@ -86,7 +114,11 @@ namespace DiscordVerifyBot
             await _client.LoginAsync(TokenType.Bot, Bot_Token);
             await _client.StartAsync();
 
-            await Task.Delay(-1);
+            _quitEvent.WaitOne();
+
+            await _client.LogoutAsync();
+            await _client.StopAsync();
+            await Task.Delay(millisecondsDelay: 1000);
         }
     }
 }

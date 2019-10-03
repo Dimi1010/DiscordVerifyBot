@@ -18,7 +18,8 @@ namespace DiscordVerifyBot.Migrations
 
             modelBuilder.Entity("DiscordVerifyBot.Resources.Database.Model.DiscordGuildUser", b =>
                 {
-                    b.Property<ulong>("Id");
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("GuildId");
 

@@ -171,20 +171,20 @@ namespace DiscordVerifyBot.Core.Commands.General
                     message += $"by { Context.Guild.GetUser(form.Verifier).Username } ";
                 message += "and approved.";
 
+                _logger.Log(Message: $"User {user.Id} verified and approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
                 await _replyservice.ReplyEmbedAsync(context: Context,
                     message: message);
-
-                _logger.Log(Message: $"User {user.Id} verified and approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
             }
             else {
                 try
                 {
                     await VerificationFormDataHandler.AddPendingVerificationForm(form);
 
+                    _logger.Log(Message: $"Verification form for user {user.Id} submitted by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
                     await _replyservice.ReplyEmbedAsync(context: Context,
                     message: $"Verification form for user {user.Username} has been submitted by {Context.User.Username}.");
-
-                    _logger.Log(Message: $"Verification form for user {user.Id} submitted by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
                 }
                 catch (VerificationFormExistsException)
                 {
@@ -230,7 +230,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             await _replyservice.ReplyEmbedAsync(context: Context, embed: embed);
         }
 
-        [Command("Approve")]
+        [Command("Approve"), Alias("Accept", "Allow")]
         [RequireContext(ContextType.Guild)]
         public async Task ApproveUser(IGuildUser user)
         {
@@ -282,13 +282,13 @@ namespace DiscordVerifyBot.Core.Commands.General
             form.IsApproved = true;
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
+            _logger.Log(Message: $"User {user.Id} approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been approved.");
-
-            _logger.Log(Message: $"User {user.Id} approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
 
-        [Command("Approve-All"), Alias("Approve-a")]
+        [Command("Approve-All"), Alias("Approve-a", "Allow-All", "Accept-All")]
         [RequireContext(ContextType.Guild)]
         public async Task ApproveAll()
         {
@@ -345,10 +345,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                 await VerificationFormDataHandler.AddFullVerificationForm(form);
             }
 
+            _logger.Log(Message: $"Bulk approval ({ query.Count() } forms) by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"The pending forms ({ query.Count() }) have been bulk approved by { Context.User.Username }");
-
-            _logger.Log(Message: $"Bulk approval ({ query.Count() } forms) by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
 
         [Command("Deny")]
@@ -378,10 +378,10 @@ namespace DiscordVerifyBot.Core.Commands.General
             form.IsApproved = false;
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
+            _logger.Log(Message: $"User {user.Id} denied by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been denied verification.");
-
-            _logger.Log(Message: $"User {user.Id} denied by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
         }
 
         #endregion

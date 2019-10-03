@@ -15,7 +15,7 @@ namespace DiscordVerifyBot.Resources.Database.Model
         /// <summary>
         /// ID of the data entry
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public ulong Id { get; set; }
 
