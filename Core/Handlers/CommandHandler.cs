@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using DiscordVerifyBot.Core.Services;
+using DiscordVerifyBot.Core.Utility;
+using System.Linq;
 
 namespace DiscordVerifyBot.Core.Handlers
 {
@@ -74,8 +75,15 @@ namespace DiscordVerifyBot.Core.Handlers
                         Message: $"Error Processing Command. Text: {context.Message.Content} | Error: {result.ErrorReason}",
                         Source: "Commands"
                         );
+                    // TODO: Check if CommandInfo is present if command fails
+                    if (result.Error == CommandError.UnknownCommand)
+                    {
+                        var similar = await MostSimilarCommandAsync(context.Message.Content);
 
-                    await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason);
+                        await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason + $"\nDid you mean '--{similar.Item1}' instead? ");
+                    }
+                    else
+                        await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason);
                 }
             }
             else
@@ -88,6 +96,56 @@ namespace DiscordVerifyBot.Core.Handlers
                         );
                 }
             }
+        }
+
+        private async Task<Tuple<string, CommandInfo>> MostSimilarCommandAsync(string inputText, float threshhold = 0.7f)
+        {
+            if (string.IsNullOrWhiteSpace(inputText)) return null;
+            if (threshhold < 0) threshhold = 0;
+            if (threshhold > 1) threshhold = 1;
+
+            var commandScores = new List<Tuple<string, double, CommandInfo>>();
+
+            foreach (var command in _commandService.Commands)
+            {
+                double distance = LevenshteinDistance.Compute(command.Name, inputText);
+
+                commandScores.Add(Tuple.Create(command.Name, distance, command));
+                
+                foreach(var alias in command.Aliases)
+                {
+                    if (alias == command.Name) continue;
+
+                    double alias_distance = LevenshteinDistance.Compute(alias, inputText);
+
+                    commandScores.Add(Tuple.Create(alias, distance, command));
+                }
+            }
+
+            var scores = commandScores.Select(x => x.Item2);
+
+            var probabilities_inverted = Softmax.Compute(scores);
+            var probabilities = probabilities_inverted.Select(x => 1 - x).ToList();
+
+            var commandProbabilities = new List<Tuple<string, double, CommandInfo>>();
+
+            if (commandScores.Count != probabilities.Count())
+                throw new ArgumentException(nameof(commandScores) + " length is not equal to " + nameof(probabilities));
+
+            for(int i = 0; i < commandScores.Count; ++i)
+            {
+                commandProbabilities.Add(Tuple.Create(commandScores[i].Item1, probabilities[i], commandScores[i].Item3));
+            }
+
+            commandProbabilities = commandProbabilities.Where(x => x.Item2 >= threshhold).OrderByDescending(x => x.Item2).ToList();
+            
+            if(commandProbabilities.Count > 0)
+            {
+                var top = commandProbabilities.FirstOrDefault();
+                return Tuple.Create(top.Item1, top.Item3);
+            }
+            else
+                return null;
         }
     }
 }
