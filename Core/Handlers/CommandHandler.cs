@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using Serilog;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -17,7 +19,6 @@ namespace DiscordVerifyBot.Core.Handlers
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly ILoggerService _loggerService;
         private readonly IReplyService _replyService;
         private readonly IServiceProvider _serviceProvider;
 
@@ -27,13 +28,11 @@ namespace DiscordVerifyBot.Core.Handlers
             DiscordSocketClient client,
             CommandService commandService, 
             IServiceProvider serviceProvider,
-            ILoggerService loggerService,
             IReplyService replyService)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _loggerService = loggerService ?? throw new ArgumentNullException(nameof(loggerService));
             _replyService = replyService ?? throw new ArgumentNullException(nameof(replyService));
 
             using ( var DH = new SettingsDataHandler())
@@ -71,10 +70,10 @@ namespace DiscordVerifyBot.Core.Handlers
             {
                 if (!string.IsNullOrEmpty(result.ErrorReason))
                 {
-                    _loggerService.Log(
-                        Message: $"Error Processing Command. Text: {context.Message.Content} | Error: {result.ErrorReason}",
-                        Source: "Commands"
+                   Log.Information(
+                        "Error Processing Command. Text: {MessageContext} | Error: {ErrorReason}", context.Message.Content, result.ErrorReason
                         );
+
                     // TODO: Check if CommandInfo is present if command fails
                     if (result.Error == CommandError.UnknownCommand)
                     {
@@ -90,9 +89,8 @@ namespace DiscordVerifyBot.Core.Handlers
             {
                 if (!string.IsNullOrEmpty(result.ErrorReason))
                 {
-                    _loggerService.Log(
-                        Message: $"Processing Command. Text: {context.Message.Content} | Result: {result.ErrorReason}",
-                        Source: "Commands"
+                    Log.Information(
+                        "Processing Command. Text: {MessageContext} | Result: {ErrorReason}", context.Message.Content, result.ErrorReason
                         );
                 }
             }

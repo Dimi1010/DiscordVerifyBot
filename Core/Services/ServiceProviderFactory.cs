@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
+using Serilog;
+
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -19,9 +21,10 @@ namespace DiscordVerifyBot.Core.Services
 
         public IServiceProvider Build()
             => new ServiceCollection()
+            .AddLogging(loggingBuilded =>
+                loggingBuilded.AddSerilog(dispose: true))
             .AddSingleton(_client)
             .AddSingleton(_commands)
-            .AddSingleton<ILoggerService, ConsoleLoggerService>()
             .AddTransient<IReplyService, CommandReplyService>()
             .BuildServiceProvider();
     }
