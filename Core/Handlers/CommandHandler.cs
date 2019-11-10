@@ -98,7 +98,7 @@ namespace DiscordVerifyBot.Core.Handlers
             }
         }
 
-        private async Task<Tuple<string, CommandInfo>> MostSimilarCommandAsync(string inputText, float threshhold = 0.7f)
+        private async Task<Tuple<string, CommandInfo>> MostSimilarCommandAsync(string inputText, float threshhold = 0.95f)
         {
             if (string.IsNullOrWhiteSpace(inputText)) return null;
             if (threshhold < 0) threshhold = 0;
@@ -108,6 +108,18 @@ namespace DiscordVerifyBot.Core.Handlers
 
             foreach (var command in _commandService.Commands)
             {
+                bool restrictedCommand = false;
+                foreach(var condition in command.Preconditions)
+                {
+                    if (condition.Group == null && condition is RequireOwnerAttribute)
+                    {
+                        restrictedCommand = true;
+                        break;
+                    }
+                }
+
+                if (restrictedCommand) continue;
+
                 double distance = LevenshteinDistance.Compute(command.Name, inputText);
 
                 commandScores.Add(Tuple.Create(command.Name, distance, command));
