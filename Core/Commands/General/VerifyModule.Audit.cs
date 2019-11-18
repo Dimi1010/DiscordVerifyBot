@@ -119,19 +119,20 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Timestamp = DateTimeOffset.UtcNow
             };
 
-            string permLevelString;
-            switch (dbUser.PermissionLevel)
-            {
-                case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Verify:
-                    permLevelString = "Verifier";
-                    break;
-                case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Approve:
-                    permLevelString = "Approver";
-                    break;
-                default:
-                    permLevelString = "None";
-                    break;
-            }
+            string permLevelString = "None";
+            if(dbUser != null)
+                switch (dbUser.PermissionLevel)
+                {
+                    case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Verify:
+                        permLevelString = "Verifier";
+                        break;
+                    case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Approve:
+                        permLevelString = "Approver";
+                        break;
+                    default:
+                        permLevelString = "None";
+                        break;
+                }
 
             var field = new EmbedFieldBuilder
             {
