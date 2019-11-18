@@ -61,7 +61,9 @@ namespace DiscordVerifyBot
             using (var DH = new SettingsDataHandler())
             {
                 settings = DH.GetSettings();
-            
+
+                #region Logger Creation
+
                 //Gets and converts Log Levels to match between Serilog and integrated Discord.Net Logger
                 var LogLevelSerilog = Serilog.Events.LogEventLevel.Information;
                 var LogLevelDiscord = LogSeverity.Info;
@@ -76,18 +78,26 @@ namespace DiscordVerifyBot
                 {
                     MinimumLevel = LogLevelSerilog
                 };
-            
-                Log.Logger = new LoggerConfiguration()
+
+                var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.Is(LogLevelSerilog)
                     .Enrich.With(new ThreadIdEnricher())
                     .WriteTo.Console(
-                        outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}")
-                    .WriteTo.File(
+                        outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}");
+                if (Convert.ToBoolean(settings.RollingLogRetainedFiles))
+                {
+                    loggerConfiguration.WriteTo.File(
                         path: DH.GetLogFilePath(),
                         rollingInterval: RollingInterval.Day,
                         retainedFileCountLimit: settings.RollingLogRetainedFiles,
-                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level} {Message}{NewLine}{Exception}]")
-                    .CreateLogger();         
+                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level} {Message}{NewLine}{Exception}]");
+                }
+
+                Log.Logger = loggerConfiguration.CreateLogger();
+
+                Log.Debug("Logger Created");
+
+                #endregion
 
                 _client = new DiscordSocketClient(new DiscordSocketConfig
                 {
