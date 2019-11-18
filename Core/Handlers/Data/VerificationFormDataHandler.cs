@@ -25,6 +25,20 @@ namespace DiscordVerifyBot.Core.Handlers
         }
 
         /// <summary>
+        /// Returns all verification forms for a guild
+        /// </summary>
+        /// <param name="guildId">Snowflake ID of the guild</param>
+        /// <param name="ammount">Number of verification forms to return sorted from the most recent one</param>
+        /// <returns></returns>
+        public static IList<VerificationForm> GetVerificationFormsByGuild(ulong guildId, int rows)
+        {
+            using (var DbContext = new SQLiteDatabaseContext())
+            {
+                return DbContext.VerificationDB.Where(x => x.GuildId == guildId).OrderByDescending(x => x.IssuedUtc).Take(rows).ToList();
+            }
+        }
+
+        /// <summary>
         /// Returns the pending verification forms for a guild
         /// </summary>
         /// <param name="guildId">Snowflake ID of the guild</param>
