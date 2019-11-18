@@ -11,12 +11,10 @@ namespace DiscordVerifyBot.Core.Commands.General
     class UtilitiesModule : ModuleBase<SocketCommandContext>
     {
         private readonly IReplyService _replyservice;
-        private readonly ILoggerService _logger;
 
-        public UtilitiesModule(IReplyService replyService, ILoggerService logger)
+        public UtilitiesModule(IReplyService replyService)
         {
             _replyservice = replyService ?? throw new ArgumentNullException(paramName: "replyService");
-            _logger = logger ?? throw new ArgumentNullException(paramName: "logger");
         }
 
         #region Utility
