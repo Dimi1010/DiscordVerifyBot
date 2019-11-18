@@ -7,8 +7,8 @@ namespace DiscordVerifyBot.Core.Logging
 {
     class LogLevelConverter
     {
-        private readonly Dictionary<LogEventLevel, LogSeverity> serilogToDiscordMap;
-        private readonly Dictionary<LogSeverity, LogEventLevel> discordToSerilogMap;
+        private readonly Dictionary<LogEventLevel, LogSeverity> serilogToDiscordMap = new Dictionary<LogEventLevel, LogSeverity>();
+        private readonly Dictionary<LogSeverity, LogEventLevel> discordToSerilogMap = new Dictionary<LogSeverity, LogEventLevel>();
 
         public LogLevelConverter()
         {
