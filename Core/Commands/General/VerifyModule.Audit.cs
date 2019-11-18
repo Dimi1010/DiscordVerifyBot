@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -147,5 +148,40 @@ namespace DiscordVerifyBot.Core.Commands.General
 
         #endregion
 
+        #region Verificator Rankings
+
+        [Command("Leaderboard")]
+        public async Task ShowVerificatorLeaderboard()
+        {
+            var forms = VerificationFormDataHandler.GetVerificationFormsByGuild(Context.Guild.Id);
+
+            var groups = forms.GroupBy(x => x.Verifier);
+
+            var embed = new EmbedBuilder
+            {
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = $"Showing last {forms.Count} verification forms",
+                    IconUrl = Context.Client.CurrentUser.GetAvatarUrl()
+                },
+                Color = Color.Blue,
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            foreach(var group in groups)
+            {
+                var user = Context.Guild.GetUser(group.Key);
+                var field = new EmbedFieldBuilder()
+                {
+                    Name = user.Nickname ?? user.Username,
+                    Value = group.Count()
+                };
+                embed.AddField(field);
+            }
+
+            await _replyservice.ReplyEmbedAsync(Context, embed);
+        }
+
+        #endregion
     }
 }
