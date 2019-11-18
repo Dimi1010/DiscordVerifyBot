@@ -90,11 +90,10 @@ namespace DiscordVerifyBot
                         path: DH.GetLogFilePath(),
                         rollingInterval: RollingInterval.Day,
                         retainedFileCountLimit: settings.RollingLogRetainedFiles,
-                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level} {Message}{NewLine}{Exception}]");
+                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}");
                 }
 
                 Log.Logger = loggerConfiguration.CreateLogger();
-
                 Log.Debug("Logger Created");
 
                 #endregion
@@ -175,6 +174,9 @@ namespace DiscordVerifyBot
             await _client.StartAsync();
 
             _quitEvent.WaitOne();
+
+            Log.Logger.Information(
+                "User initiated shutdown.");
 
             await _client.LogoutAsync();
             await _client.StopAsync();
