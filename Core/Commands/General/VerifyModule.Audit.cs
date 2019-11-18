@@ -9,7 +9,7 @@ using DiscordVerifyBot.Core.Handlers;
 
 namespace DiscordVerifyBot.Core.Commands.General
 {
-    partial class VerifyModule : ModuleBase<SocketCommandContext>
+    public partial class VerifyModule : ModuleBase<SocketCommandContext>
     {
         #region Verification Forms
 

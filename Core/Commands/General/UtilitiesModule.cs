@@ -6,7 +6,7 @@ using DiscordVerifyBot.Core.Services;
 
 namespace DiscordVerifyBot.Core.Commands.General
 {
-    class UtilitiesModule : ModuleBase<SocketCommandContext>
+    public class UtilitiesModule : ModuleBase<SocketCommandContext>
     {
         private readonly IReplyService _replyservice;
 
