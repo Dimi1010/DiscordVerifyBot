@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DiscordVerifyBot.Resources
+﻿namespace DiscordVerifyBot.Resources
 {
     public class Settings
     {
