@@ -75,6 +75,8 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Timestamp = DateTimeOffset.UtcNow
             };
 
+            users = users.OrderByDescending(x => Convert.ChangeType(x.PermissionLevel, x.PermissionLevel.GetTypeCode())).ToList();
+
             foreach(var user in users)
             {
                 string permLevelString;
@@ -154,13 +156,13 @@ namespace DiscordVerifyBot.Core.Commands.General
         {
             var forms = VerificationFormDataHandler.GetVerificationFormsByGuild(Context.Guild.Id);
 
-            var groups = forms.GroupBy(x => x.Verifier);
+            var groups = forms.GroupBy(x => x.Verifier).OrderByDescending( x => x.Count() );
 
             var embed = new EmbedBuilder
             {
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = $"Showing last {forms.Count} verification forms",
+                    Name = $"Showing verification leaderboard",
                     IconUrl = Context.Client.CurrentUser.GetAvatarUrl()
                 },
                 Color = Color.Blue,
