@@ -82,8 +82,9 @@ namespace DiscordVerifyBot
                 var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.Is(LogLevelSerilog)
                     .Enrich.With(new ThreadIdEnricher())
+                    .Enrich.With(new ProcessIdEnricher())
                     .WriteTo.Console(
-                        outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}");
+                        outputTemplate: "{Timestamp:HH:mm} [{Level}] [{ProcessId}-{ThreadId}] {Message}{NewLine}{Exception}");
                 if (Convert.ToBoolean(settings.RollingLogRetainedFiles))
                 {
                     loggerConfiguration.WriteTo.File(
