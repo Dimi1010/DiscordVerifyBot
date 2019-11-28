@@ -1,5 +1,6 @@
 {
-  "BotToken": "",
-  "LogLevel": 3,
-  "DefaultPrefix": "--"
+    "BotToken": "",
+    "LogLevel": 3,
+    "RollingLogRetainedFiles": 5,
+    "DefaultPrefix": "--"
 }

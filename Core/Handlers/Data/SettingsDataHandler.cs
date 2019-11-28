@@ -13,7 +13,8 @@ namespace DiscordVerifyBot.Core.Handlers
     /// </summary>
     public class SettingsDataHandler : IDisposable
     {
-        private readonly string _path;
+        private readonly string _settingsPath;
+        private readonly string _logFilePath;
 
         public SettingsDataHandler()
         {
@@ -22,10 +23,11 @@ namespace DiscordVerifyBot.Core.Handlers
 
             //Path to the Settings
             string SettingsPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
+            _logFilePath = AssemblyFullPath.Replace(AssemblyFilename, @"Log\log.log");
             //Name of the Settings
             string SettingsFilename = "settings.json";
 
-            _path = SettingsPath + SettingsFilename;
+            _settingsPath = SettingsPath + SettingsFilename;
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace DiscordVerifyBot.Core.Handlers
             try
             {
                 string jsonFromFile;
-                using (var reader = new StreamReader(_path))
+                using (var reader = new StreamReader(_settingsPath))
                 {
                     jsonFromFile = reader.ReadToEnd();
                 }
@@ -51,6 +53,15 @@ namespace DiscordVerifyBot.Core.Handlers
         }
 
         /// <summary>
+        /// Gets the path to the logs
+        /// </summary>
+        /// <returns>String representing the path to logs</returns>
+        public string GetLogFilePath()
+        {
+            return _logFilePath;
+        }
+
+        /// <summary>
         /// Gets the current settings.json content asynchronously
         /// </summary>
         /// <returns>Current Settings</returns>
@@ -59,7 +70,7 @@ namespace DiscordVerifyBot.Core.Handlers
             try
             {
                 string jsonFromFile;
-                using (var reader = new StreamReader(_path))
+                using (var reader = new StreamReader(_settingsPath))
                 {
                     jsonFromFile = await reader.ReadToEndAsync();
                 }
@@ -84,12 +95,13 @@ namespace DiscordVerifyBot.Core.Handlers
                 {
                     BotToken = "",
                     LogLevel = 3,
+                    RollingLogRetainedFiles = 5,
                     DefaultPrefix = "--"
                 };
 
                 var jsonToWrite = JsonConvert.SerializeObject(settings, Formatting.Indented);
 
-                using (var writer = new StreamWriter(_path))
+                using (var writer = new StreamWriter(_settingsPath))
                 {
                     await writer.WriteAsync(jsonToWrite);
                 }

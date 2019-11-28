@@ -1,4 +1,7 @@
 ﻿using System.Threading.Tasks;
+
+using Serilog;
+
 using Discord;
 using Discord.Commands;
 using DiscordVerifyBot.Core.Handlers;
@@ -38,7 +41,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                 action: action
                 );
 
-            _logger.Log(Message: $"User {Context.User.Id} in {Context.Guild.Id} added role {role.Id} with action { action.ToString() }", Source:"Commands");
+            Log.Information(
+                "User {UserId} in {GuildId} added role {RoleId} with action {Action}",
+                Context.User.Id, Context.Guild.Id, role.Id, action.ToString()
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"Role {role.Name} has been added with the action {action.ToString()}.");
@@ -52,7 +58,10 @@ namespace DiscordVerifyBot.Core.Commands.General
         {
             await DiscordRoleDataHandler.RemoveGuildRole(role.Id, Context.Guild.Id);
 
-            _logger.Log(Message: $"User {Context.User.Id} in {Context.Guild.Id} removed role {role.Id} from the database", Source: "Commands");
+            Log.Information(
+                "User {UserID} in {GuildID} removed role {RoleID} from the database",
+                Context.User.Id, Context.Guild.Id, role.Id
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"Role {role.Name} has been removed from the database.");

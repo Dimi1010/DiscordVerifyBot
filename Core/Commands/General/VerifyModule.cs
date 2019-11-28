@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+
+using Serilog;
+
 using Discord;
 using Discord.Commands;
 
@@ -14,12 +17,10 @@ namespace DiscordVerifyBot.Core.Commands.General
     public partial class VerifyModule : ModuleBase<SocketCommandContext>
     {
         private readonly IReplyService _replyservice;
-        private readonly ILoggerService _logger;
 
-        public VerifyModule(IReplyService replyService, ILoggerService logger)
+        public VerifyModule(IReplyService replyService)
         {
             _replyservice = replyService ?? throw new ArgumentNullException(paramName: "replyService");
-            _logger = logger ?? throw new ArgumentNullException(paramName: "logger");
         }
 
         #region L1User
@@ -32,9 +33,10 @@ namespace DiscordVerifyBot.Core.Commands.General
         {
             await DiscordUserDataHandler.AddGuildUser(user.Id, user.GuildId, DiscordGuildUser.PermissionLevels.Verify);
 
-            _logger.Log(
-                Message: $"Adding {user.Id} to the L1 list of guild {Context.Guild.Id}",
-                Source: "Commands");
+            Log.Information(
+               "Adding {UserID} to the L1 list of guild {GuildID}",
+               user.Id, Context.Guild.Id
+               );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been granted verifier permissions.");
@@ -56,9 +58,10 @@ namespace DiscordVerifyBot.Core.Commands.General
             {
                 await DiscordUserDataHandler.RemoveGuildUser(res);
 
-                _logger.Log(
-                Message: $"Removing {user.Id} from the L1 list of guild {Context.Guild.Id}",
-                Source: "Commands");
+                Log.Information(
+                "Removing {UserID} from the L1 list of guild {GuildID}",
+                user.Id, Context.Guild.Id
+                );
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
                     message: $"User {user.Username}'s verifier permissions have been revoked.");
@@ -77,9 +80,10 @@ namespace DiscordVerifyBot.Core.Commands.General
         {
             await DiscordUserDataHandler.AddGuildUser(user.Id, user.GuildId, DiscordGuildUser.PermissionLevels.Approve);
 
-            _logger.Log(
-                Message: $"Adding {user.Id} to the L2 list of guild {Context.Guild.Id}",
-                Source: "Commands");
+            Log.Information(
+                "Adding {UserID} to the L2 list of guild {GuildID}",
+                user.Id, Context.Guild.Id
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been granted approver permissions.");
@@ -101,9 +105,10 @@ namespace DiscordVerifyBot.Core.Commands.General
             {
                 await DiscordUserDataHandler.RemoveGuildUser(res);
 
-                _logger.Log(
-                Message: $"Removing {user.Id} from the L1 list of guild {Context.Guild.Id}",
-                Source: "Commands");
+                Log.Information(
+               "Removing {UserID} from the L1 list of guild {GuildID}",
+                user.Id, Context.Guild.Id
+               );
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
                     message: $"User {user.Username}'s approver permissions have been revoked.");
@@ -171,7 +176,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                     message += $"by { Context.Guild.GetUser(form.Verifier).Username } ";
                 message += "and approved.";
 
-                _logger.Log(Message: $"User {user.Id} verified and approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+                Log.Information(
+                    "User {UserID} verified and approved by {InvokingUserID} in guild {GuildID}",
+                    user.Id, Context.User.Id, Context.Guild.Id
+                    );
 
                 await _replyservice.ReplyEmbedAsync(context: Context,
                     message: message);
@@ -181,7 +189,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                 {
                     await VerificationFormDataHandler.AddPendingVerificationForm(form);
 
-                    _logger.Log(Message: $"Verification form for user {user.Id} submitted by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+                    Log.Information(
+                        "Verification form for user {UserID} submitted by {InvokingUserID} in guild {GuildID}",
+                        user.Id, Context.User.Id, Context.Guild.Id
+                        );
 
                     await _replyservice.ReplyEmbedAsync(context: Context,
                     message: $"Verification form for user {user.Username} has been submitted by {Context.User.Username}.");
@@ -282,7 +293,10 @@ namespace DiscordVerifyBot.Core.Commands.General
             form.IsApproved = true;
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
-            _logger.Log(Message: $"User {user.Id} approved by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+            Log.Information(
+                "User {UserID} approved by {InvokingUserID} in guild {GuildID}",
+                user.Id, Context.User.Id, Context.Guild.Id
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been approved.");
@@ -345,7 +359,10 @@ namespace DiscordVerifyBot.Core.Commands.General
                 await VerificationFormDataHandler.AddFullVerificationForm(form);
             }
 
-            _logger.Log(Message: $"Bulk approval ({ query.Count() } forms) by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+            Log.Information(
+                "Bulk approval ({FormCount} forms) by {UserID} in guild {GuildID}",
+                query.Count(), Context.User.Id, Context.Guild.Id
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"The pending forms ({ query.Count() }) have been bulk approved by { Context.User.Username }");
@@ -378,7 +395,10 @@ namespace DiscordVerifyBot.Core.Commands.General
             form.IsApproved = false;
             await VerificationFormDataHandler.AddFullVerificationForm(form);
 
-            _logger.Log(Message: $"User {user.Id} denied by {Context.User.Id} in guild {Context.Guild.Id}", Source: "Commands");
+            Log.Information(
+                "User {ExecutingUserID} denied by {UserID} in guild {GuildID}",
+                user.Id, Context.User.Id, Context.Guild.Id
+                );
 
             await _replyservice.ReplyEmbedAsync(context: Context,
                 message: $"User {user.Username} has been denied verification.");

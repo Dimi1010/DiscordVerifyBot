@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
+using Serilog;
+using Serilog.Core;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using DiscordVerifyBot.Core.Services;
-
 using DiscordVerifyBot.Core.Handlers;
+using DiscordVerifyBot.Core.Logging;
 
 using DiscordVerifyBot.Resources;
 using DiscordVerifyBot.Resources.Database;
@@ -35,12 +38,6 @@ namespace DiscordVerifyBot
                 eArgs.Cancel = true;
             };
 
-            Settings settings;
-            using (var DH = new SettingsDataHandler())
-            {
-                settings = DH.GetSettings();
-            }
-
             //Creates and/or Updates the database when the program is strated
             using (var DbContext = new SQLiteDatabaseContext())
             {
@@ -60,17 +57,60 @@ namespace DiscordVerifyBot
                 //}
             }
 
-            _client = new DiscordSocketClient(new DiscordSocketConfig
+            Settings settings;
+            using (var DH = new SettingsDataHandler())
             {
-                LogLevel = Enum.IsDefined(typeof(LogSeverity), settings.LogLevel) ? (LogSeverity)settings.LogLevel : LogSeverity.Info
-            });
+                settings = DH.GetSettings();
 
-            _commandService = new CommandService(new CommandServiceConfig
-            {
-                CaseSensitiveCommands = false,
-                DefaultRunMode = RunMode.Async,
-                LogLevel = Enum.IsDefined(typeof(LogSeverity), settings.LogLevel) ? (LogSeverity)settings.LogLevel : LogSeverity.Info
-            });
+                #region Logger Creation
+
+                //Gets and converts Log Levels to match between Serilog and integrated Discord.Net Logger
+                var LogLevelSerilog = Serilog.Events.LogEventLevel.Information;
+                var LogLevelDiscord = LogSeverity.Info;
+
+                if (Enum.IsDefined(typeof(Serilog.Events.LogEventLevel), settings.LogLevel))
+                {
+                    LogLevelSerilog = (Serilog.Events.LogEventLevel)settings.LogLevel;
+                    new LogLevelConverter().SerilogToDiscordNet(LogLevelSerilog, out LogLevelDiscord);
+                }
+
+                LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch()
+                {
+                    MinimumLevel = LogLevelSerilog
+                };
+
+                var loggerConfiguration = new LoggerConfiguration()
+                    .MinimumLevel.Is(LogLevelSerilog)
+                    .Enrich.With(new ThreadIdEnricher())
+                    .Enrich.With(new ProcessIdEnricher())
+                    .WriteTo.Console(
+                        outputTemplate: "{Timestamp:HH:mm} [{Level}] [{ProcessId}-{ThreadId}] {Message}{NewLine}{Exception}");
+                if (Convert.ToBoolean(settings.RollingLogRetainedFiles))
+                {
+                    loggerConfiguration.WriteTo.File(
+                        path: DH.GetLogFilePath(),
+                        rollingInterval: RollingInterval.Day,
+                        retainedFileCountLimit: settings.RollingLogRetainedFiles,
+                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}");
+                }
+
+                Log.Logger = loggerConfiguration.CreateLogger();
+                Log.Debug("Logger Created");
+
+                #endregion
+
+                _client = new DiscordSocketClient(new DiscordSocketConfig
+                {
+                    LogLevel = LogLevelDiscord
+                });
+
+                _commandService = new CommandService(new CommandServiceConfig
+                {
+                    CaseSensitiveCommands = false,
+                    DefaultRunMode = RunMode.Async,
+                    LogLevel = LogLevelDiscord
+                });
+            }
 
             _serviceProvider = new ServiceProviderFactory(_client, _commandService).Build();
 
@@ -78,7 +118,6 @@ namespace DiscordVerifyBot
                 client: _client,
                 commandService: _commandService,
                 serviceProvider: _serviceProvider,
-                loggerService: _serviceProvider.GetRequiredService<ILoggerService>(),
                 replyService: _serviceProvider.GetRequiredService<IReplyService>()
                 );
 
@@ -88,12 +127,33 @@ namespace DiscordVerifyBot
 
         private async Task OnClientReadyAsync()
         {
-            await _client.SetGameAsync("to your commands.", null, ActivityType.Listening);
+            await _client.SetGameAsync("your commands.", null, ActivityType.Listening);
         }
 
         private async Task OnClientLogAsync(LogMessage message)
         {
-            await _serviceProvider.GetRequiredService<ILoggerService>().LogAsync(Message: message.Message, Source: message.Source);
+            switch (message.Severity)
+            {
+                case LogSeverity.Critical:
+                    Log.Fatal(message.Message);
+                    break;
+                case LogSeverity.Error:
+                    Log.Error(message.Message);
+                    break;
+                case LogSeverity.Warning:
+                    Log.Warning(message.Message);
+                    break;
+                case LogSeverity.Info:
+                    Log.Information(message.Message);
+                    break;
+                case LogSeverity.Debug:
+                    Log.Debug(message.Message);
+                    break;
+                case LogSeverity.Verbose:
+                    Log.Verbose(message.Message);
+                    break;
+            }
+            //await _serviceProvider.GetRequiredService<ILoggerService>().LogAsync(Message: message.Message, Source: message.Source);
         }
 
         public static void Main()
@@ -115,6 +175,9 @@ namespace DiscordVerifyBot
             await _client.StartAsync();
 
             _quitEvent.WaitOne();
+
+            Log.Logger.Information(
+                "User initiated shutdown.");
 
             await _client.LogoutAsync();
             await _client.StopAsync();
