@@ -79,7 +79,7 @@ namespace DiscordVerifyBot.Core.Handlers
                     {
                         var similar = await MostSimilarCommandAsync(context.Message.Content);
 
-                        await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason + $"\nDid you mean '--{similar.Item1}' instead? ");
+                        await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason + $"\nDid you mean '{_prefix}{similar.Item1}' instead? ");
                     }
                     else
                         await _replyService.ReplyEmbedAsync(context, message: "Command Failed", description: result.ErrorReason);

@@ -360,7 +360,7 @@ namespace DiscordVerifyBot.Core.Commands.General
             }
 
             Log.Information(
-                "Bulk approval ({ FormCount } forms) by {UserID} in guild {GuildID}",
+                "Bulk approval ({FormCount} forms) by {UserID} in guild {GuildID}",
                 query.Count(), Context.User.Id, Context.Guild.Id
                 );
 

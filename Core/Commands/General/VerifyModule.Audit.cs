@@ -9,7 +9,7 @@ using DiscordVerifyBot.Core.Handlers;
 
 namespace DiscordVerifyBot.Core.Commands.General
 {
-    partial class VerifyModule : ModuleBase<SocketCommandContext>
+    public partial class VerifyModule : ModuleBase<SocketCommandContext>
     {
         #region Verification Forms
 
@@ -75,6 +75,8 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Timestamp = DateTimeOffset.UtcNow
             };
 
+            users = users.OrderByDescending(x => Convert.ChangeType(x.PermissionLevel, x.PermissionLevel.GetTypeCode())).ToList();
+
             foreach(var user in users)
             {
                 string permLevelString;
@@ -119,19 +121,20 @@ namespace DiscordVerifyBot.Core.Commands.General
                 Timestamp = DateTimeOffset.UtcNow
             };
 
-            string permLevelString;
-            switch (dbUser.PermissionLevel)
-            {
-                case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Verify:
-                    permLevelString = "Verifier";
-                    break;
-                case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Approve:
-                    permLevelString = "Approver";
-                    break;
-                default:
-                    permLevelString = "None";
-                    break;
-            }
+            string permLevelString = "None";
+            if(dbUser != null)
+                switch (dbUser.PermissionLevel)
+                {
+                    case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Verify:
+                        permLevelString = "Verifier";
+                        break;
+                    case Resources.Database.Model.DiscordGuildUser.PermissionLevels.Approve:
+                        permLevelString = "Approver";
+                        break;
+                    default:
+                        permLevelString = "None";
+                        break;
+                }
 
             var field = new EmbedFieldBuilder
             {
@@ -153,13 +156,13 @@ namespace DiscordVerifyBot.Core.Commands.General
         {
             var forms = VerificationFormDataHandler.GetVerificationFormsByGuild(Context.Guild.Id);
 
-            var groups = forms.GroupBy(x => x.Verifier);
+            var groups = forms.GroupBy(x => x.Verifier).OrderByDescending( x => x.Count() );
 
             var embed = new EmbedBuilder
             {
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = $"Showing last {forms.Count} verification forms",
+                    Name = $"Showing verification leaderboard",
                     IconUrl = Context.Client.CurrentUser.GetAvatarUrl()
                 },
                 Color = Color.Blue,
