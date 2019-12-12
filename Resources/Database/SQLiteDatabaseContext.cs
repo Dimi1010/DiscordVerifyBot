@@ -34,13 +34,13 @@ namespace DiscordVerifyBot.Resources.Database
             string AssemblyFilename = Path.GetFileName(AssemblyFullPath);
 
             //Path to the Database
-            string DbPath = "";
+            string DbDirectory = "";
             //HACK: Comment following line when Updating DB from NuGet
-            DbPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
+            DbDirectory = AssemblyFullPath.Replace(AssemblyFilename, "Data");
             //Name of the Database
             string DbFilename = "Database.sqlite";
 
-            Options.UseSqlite($"Data Source={DbPath}{DbFilename}");
+            Options.UseSqlite($"Data Source={Path.Combine(DbDirectory, DbFilename)}");
         }
     }
 }

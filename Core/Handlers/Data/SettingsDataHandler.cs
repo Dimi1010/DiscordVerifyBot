@@ -21,13 +21,14 @@ namespace DiscordVerifyBot.Core.Handlers
             string AssemblyFullPath = Assembly.GetEntryAssembly().Location;
             string AssemblyFilename = Path.GetFileName(AssemblyFullPath);
 
+            //Path to Logs
+            _logFilePath = AssemblyFullPath.Replace(AssemblyFilename, Path.Combine("Log", "log.log"));
+            
             //Path to the Settings
-            string SettingsPath = AssemblyFullPath.Replace(AssemblyFilename, @"Data\");
-            _logFilePath = AssemblyFullPath.Replace(AssemblyFilename, @"Log\log.log");
-            //Name of the Settings
+            string SettingsPath = AssemblyFullPath.Replace(AssemblyFilename, "Data");
             string SettingsFilename = "settings.json";
 
-            _settingsPath = SettingsPath + SettingsFilename;
+            _settingsPath = Path.Combine(SettingsPath, SettingsFilename);
         }
 
         /// <summary>
