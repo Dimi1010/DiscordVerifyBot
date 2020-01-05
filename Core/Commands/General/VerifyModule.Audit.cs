@@ -93,9 +93,14 @@ namespace DiscordVerifyBot.Core.Commands.General
                         break;
                 }
 
+                var userObject = Context.Guild.GetUser(user.UserId);
+                var usernameString = $"User Not Found (ID {user.UserId.ToString()})";
+                if (userObject != null)
+                    usernameString = userObject.Nickname ?? userObject.Username;
+
                 var field = new EmbedFieldBuilder
                 {
-                    Name = Context.Guild.GetUser(user.UserId).Username,
+                    Name = usernameString,
                     Value = "Permission: " + permLevelString
                 };
 
@@ -172,9 +177,13 @@ namespace DiscordVerifyBot.Core.Commands.General
             foreach(var group in groups)
             {
                 var user = Context.Guild.GetUser(group.Key);
+                string usernameString = $"User Not Found (ID {group.Key.ToString()})";
+                if (user != null)
+                    usernameString = user.Nickname ?? user.Username;
+
                 var field = new EmbedFieldBuilder()
                 {
-                    Name = user.Nickname ?? user.Username,
+                    Name = usernameString,
                     Value = group.Count()
                 };
                 embed.AddField(field);
