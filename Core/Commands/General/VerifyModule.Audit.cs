@@ -14,6 +14,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region Verification Forms
 
         [Command("Show-Last"), Alias("sl")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowLastForms(int records = 5)
         {
             if(records <= 0)
@@ -54,6 +55,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region User Permissions
 
         [Command("Show-Permissions")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowUserPermissions()
         {
             var users = DiscordUserDataHandler.GetGuildUsers(Context.Guild.Id);
@@ -93,9 +95,14 @@ namespace DiscordVerifyBot.Core.Commands.General
                         break;
                 }
 
+                var userObject = Context.Guild.GetUser(user.UserId);
+                var usernameString = $"User Not Found (ID {user.UserId.ToString()})";
+                if (userObject != null)
+                    usernameString = userObject.Nickname ?? userObject.Username;
+
                 var field = new EmbedFieldBuilder
                 {
-                    Name = Context.Guild.GetUser(user.UserId).Username,
+                    Name = usernameString,
                     Value = "Permission: " + permLevelString
                 };
 
@@ -106,6 +113,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         }
 
         [Command("Show-Permissions")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowUserPermissions(IGuildUser user)
         {
             var dbUser = DiscordUserDataHandler.GetGuildUserById(user.Id, Context.Guild.Id);
@@ -152,6 +160,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region Verificator Rankings
 
         [Command("Leaderboard")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowVerificatorLeaderboard()
         {
             var forms = VerificationFormDataHandler.GetVerificationFormsByGuild(Context.Guild.Id);
@@ -172,9 +181,13 @@ namespace DiscordVerifyBot.Core.Commands.General
             foreach(var group in groups)
             {
                 var user = Context.Guild.GetUser(group.Key);
+                string usernameString = $"User Not Found (ID {group.Key.ToString()})";
+                if (user != null)
+                    usernameString = user.Nickname ?? user.Username;
+
                 var field = new EmbedFieldBuilder()
                 {
-                    Name = user.Nickname ?? user.Username,
+                    Name = usernameString,
                     Value = group.Count()
                 };
                 embed.AddField(field);
