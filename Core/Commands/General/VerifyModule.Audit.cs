@@ -14,6 +14,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region Verification Forms
 
         [Command("Show-Last"), Alias("sl")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowLastForms(int records = 5)
         {
             if(records <= 0)
@@ -54,6 +55,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region User Permissions
 
         [Command("Show-Permissions")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowUserPermissions()
         {
             var users = DiscordUserDataHandler.GetGuildUsers(Context.Guild.Id);
@@ -111,6 +113,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         }
 
         [Command("Show-Permissions")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowUserPermissions(IGuildUser user)
         {
             var dbUser = DiscordUserDataHandler.GetGuildUserById(user.Id, Context.Guild.Id);
@@ -157,6 +160,7 @@ namespace DiscordVerifyBot.Core.Commands.General
         #region Verificator Rankings
 
         [Command("Leaderboard")]
+        [RequireContext(ContextType.Guild)]
         public async Task ShowVerificatorLeaderboard()
         {
             var forms = VerificationFormDataHandler.GetVerificationFormsByGuild(Context.Guild.Id);
